@@ -1,0 +1,19 @@
+[prune]
+  go-tests = true
+  unused-packages = true
+
+[[constraint]]
+  name = "github.com/xeipuuv/gojsonschema"
+  version = "1.0.0"
+
+[[constraint]]
+  name = "github.com/davecgh/go-spew"
+  version = "1.1.1"
+
+[[constraint]]
+  name = "github.com/spf13/cobra"
+  version = "0.0.3"
+
+[[constraint]]
+  name = "github.com/mitchellh/go-homedir"
+  version = "1.0.0"

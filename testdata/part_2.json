@@ -1,0 +1,113 @@
+[
+    {
+        "time": 0,
+        "data": {"id": "0" },
+        "output": {
+            "compliant": false,
+            "requirements": [
+                "first_name",
+                "last_name",
+                "tax_id",
+                "address.street",
+                "address.city",
+                "address.postal_code",
+                "address.country"
+            ],
+            "past_due": []
+        }
+    },
+    {
+        "time": 20,
+        "data": {
+            "id": "0",
+            "first_name": "Veruca",
+            "last_name": "Salt"
+        },
+        "output": {
+            "compliant": false,
+            "requirements": [
+                "tax_id",
+                "address.street",
+                "address.city",
+                "address.postal_code",
+                "address.country"
+            ],
+            "past_due": []
+        }
+    },
+    {
+        "time": 40,
+        "data": {
+            "id": "0",
+            "first_name": "Veruca",
+            "last_name": "Salt",
+            "address": {
+                "country": "AT",
+                "street": "45 Dale Ln"
+            }
+        },
+        "output": {
+            "compliant": false,
+            "requirements": [
+                "tax_id",
+                "address.city",
+                "address.postal_code"
+            ],
+            "past_due": []
+        }
+    },
+    {
+        "time": 60,
+        "comments": [
+          "'street' has been removed and is a requirement again",
+          "'address.street' is not past_due because it has not been a requirement for 60s"
+        ],
+        "data": {
+            "id": "0",
+            "first_name": "Veruca",
+            "last_name": "Salt",
+            "address": {
+                "country": "AT",
+                "postal_code": "123456"
+            }
+        },
+        "output": {
+            "compliant": false,
+            "requirements": [
+                "tax_id",
+                "address.street",
+                "address.city"
+            ],
+            "past_due": [
+                "tax_id",
+                "address.city"
+            ]
+        }
+    },
+    {
+        "time": 120,
+        "comments": [
+          "'address.street' has now been a requirement for 60s and is past_due."
+        ],
+        "data": {
+            "id": "0",
+            "first_name": "Veruca",
+            "last_name": "Salt",
+            "tax_id": "777889999",
+            "address": {
+                "country": "AT",
+                "postal_code": "123456",
+                "city": "Vienna"
+            }
+        },
+        "output": {
+            "compliant": false,
+            "requirements": [
+                "address.street"
+            ],
+            "past_due": [
+                "address.street"
+            ]
+        }
+    }
+]

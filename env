@@ -1,0 +1,5 @@
+#! /bin/bash
+
+export STRIPE_HOME=$HOME/.stripe
+export STRIPE_DEADLINE="60s"
+export STRIPE_PORT=8082

@@ -1,4 +1,4 @@
-# Strip Project
+# Stripe Project
 Setting up project:
 ```bash
 go get -u github.com/appno/stripe

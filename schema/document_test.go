@@ -16,7 +16,7 @@ type documentTestInstance struct {
 }
 
 func TestDocument(t *testing.T) {
-	bytes, err := internal.LoadTestData("testdata/part_4.json")
+	bytes, err := internal.LoadTestData("testdata/part_2.json")
 	if err != nil {
 		t.Errorf("FILE READ ERROR: err ==%+v != nil", err)
 	}

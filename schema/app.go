@@ -9,6 +9,7 @@ import (
 	homedir "github.com/mitchellh/go-homedir"
 )
 
+// defaultHome     = "$HOME/.stripe"
 var (
 	defaultHome     = ".stripe"
 	defaultDeadline = "60s"
@@ -36,6 +37,7 @@ func GetAppHome() (string, error) {
 		return "", err
 	}
 
+	// homedir.Expand(path)
 	configDir, ok := os.LookupEnv("STRIPE_HOME")
 	if !ok {
 		configDir = path.Join(home, defaultHome)

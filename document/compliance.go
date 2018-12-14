@@ -42,7 +42,7 @@ func (c *Compliance) JSONString() (string, error) {
 	return string(json[:]), nil
 }
 
-func (c *Compliance) equal(other *Compliance) bool {
+func (c *Compliance) equivalent(other *Compliance) bool {
 	if c.Compliant != other.Compliant {
 		return false
 	}
@@ -87,8 +87,8 @@ func (c *CompliancePastDue) JSONString() (string, error) {
 	return string(json[:]), nil
 }
 
-func (c *CompliancePastDue) equal(other *CompliancePastDue) bool {
-	if !c.Compliance.equal(&other.Compliance) {
+func (c *CompliancePastDue) equivalent(other *CompliancePastDue) bool {
+	if !c.Compliance.equivalent(&other.Compliance) {
 		return false
 	}
 

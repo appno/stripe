@@ -139,7 +139,7 @@ func TestDocument(t *testing.T) {
 			timestamp := now.Add(currDuration - duration)
 			compliance := document.getPastDueCompliance(timestamp)
 
-			if !compliance.equal(testCase.Output) {
+			if !compliance.equivalent(testCase.Output) {
 				t.Errorf("%d:%d: %+v != %+v", i, j, compliance, testCase.Output)
 			}
 		}

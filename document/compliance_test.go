@@ -31,7 +31,7 @@ func TestCompliance(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s: %+v != nil", key, err)
 		} else {
-			if !actual.equal(value.Output) {
+			if !actual.equivalent(value.Output) {
 				t.Errorf("%s: %+v != %+v", key, actual, value.Output.Requirements)
 			}
 		}

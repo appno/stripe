@@ -1,0 +1,11 @@
+{
+    "first_name": "Augustus",
+    "last_name": ["Gloop"],
+    "id": "",
+    "tax_id": "12-34-567",
+    "address": {
+        "country": "CA",
+        "street": "345 S Arden",
+        "city": "Edmonton"
+    }
+}

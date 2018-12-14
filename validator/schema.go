@@ -1,4 +1,4 @@
-package schema
+package validator
 
 // Schema : JSONSchema validation schema
 var Schema = `{

@@ -7,7 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/appno/stripe/schema"
+	"github.com/appno/stripe/document"
 )
 
 func handler(w http.ResponseWriter, req *http.Request) {
@@ -16,12 +16,12 @@ func handler(w http.ResponseWriter, req *http.Request) {
 		panic(err)
 	}
 
-	document, err := schema.DocumentFromBytes(bytes)
+	doc, err := document.DocumentFromBytes(bytes)
 	if err != nil {
 		panic(err)
 	}
 
-	compliance := document.GetPastDueCompliance()
+	compliance := doc.GetPastDueCompliance()
 	fmt.Println(compliance.DebugString())
 
 	data, err := json.Marshal(compliance)

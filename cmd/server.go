@@ -3,7 +3,7 @@ package cmd
 import (
 	"log"
 
-	"github.com/appno/stripe/schema"
+	"github.com/appno/stripe/document"
 	"github.com/appno/stripe/server"
 	"github.com/spf13/cobra"
 )
@@ -20,7 +20,7 @@ var ServerCmd = &cobra.Command{
 	Args:    cobra.RangeArgs(0, 1),
 	Example: serverExample,
 	Run: func(cmd *cobra.Command, args []string) {
-		port := schema.GetPort()
+		port := document.GetPort()
 		if len(args) > 0 {
 			port = args[0]
 		}

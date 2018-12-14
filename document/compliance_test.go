@@ -1,4 +1,4 @@
-package schema
+package document
 
 import (
 	"encoding/json"
@@ -14,9 +14,7 @@ type testInstance struct {
 	Output *Compliance `json:"output"`
 }
 
-func TestValidator(t *testing.T) {
-	validator := DocumentValidator
-
+func TestCompliance(t *testing.T) {
 	bytes, err := internal.LoadTestData("testdata/part_1.json")
 	if err != nil {
 		t.Errorf("FILE READ ERROR: err ==%+v != nil", err)
@@ -29,12 +27,12 @@ func TestValidator(t *testing.T) {
 	}
 
 	for key, value := range result {
-		actual, err := validator.IsCompliant(value.Data)
+		actual, err := ComplianceFromData(value.Data)
 		if err != nil {
 			t.Errorf("%s: %+v != nil", key, err)
 		} else {
 			if !actual.equal(value.Output) {
-				t.Errorf("%s: %+v != %+v", key, actual, value.Output)
+				t.Errorf("%s: %+v != %+v", key, actual, value.Output.Requirements)
 			}
 		}
 	}

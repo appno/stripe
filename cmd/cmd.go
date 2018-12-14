@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/appno/stripe/schema"
+	"github.com/appno/stripe/document"
 	"github.com/spf13/cobra"
 )
 
@@ -40,14 +40,14 @@ var Part1Cmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		document, err := schema.DocumentFromBytes(input)
+		doc, err := document.DocumentFromBytes(input)
 
 		if err != nil {
 			fmt.Printf("2: ERR: %+v\n", err)
 			os.Exit(1)
 		}
 
-		compliance := document.GetCompliance()
+		compliance := doc.GetCompliance()
 
 		json, err := compliance.JSONString()
 
@@ -90,14 +90,14 @@ var Part2Cmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		document, err := schema.DocumentFromBytes(input)
+		doc, err := document.DocumentFromBytes(input)
 
 		if err != nil {
 			fmt.Printf("2: ERR: %+v\n", err)
 			os.Exit(1)
 		}
 
-		compliance := document.GetPastDueCompliance()
+		compliance := doc.GetPastDueCompliance()
 
 		json, err := compliance.JSONString()
 
@@ -115,7 +115,7 @@ var ConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "display application configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println(schema.GetConfigString())
+		fmt.Println(document.GetConfigString())
 	},
 }
 

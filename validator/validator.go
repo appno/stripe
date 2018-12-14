@@ -1,4 +1,4 @@
-package schema
+package validator
 
 import (
 	"fmt"
@@ -23,16 +23,6 @@ func MakeValidator(schema string) *Validator {
 // DefaultValidator : Create Validator with default Schema
 func DefaultValidator() *Validator {
 	return MakeValidator(Schema)
-}
-
-// IsCompliant : Check data for compliance
-func (v *Validator) IsCompliant(data interface{}) (*Compliance, error) {
-	requirements, err := v.Validate(data)
-	if err != nil {
-		return nil, err
-	}
-
-	return MakeCompliance(requirements), nil
 }
 
 // Validate : validate json string

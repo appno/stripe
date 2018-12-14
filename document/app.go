@@ -1,4 +1,4 @@
-package schema
+package document
 
 import (
 	"fmt"

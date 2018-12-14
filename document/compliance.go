@@ -1,10 +1,11 @@
-package schema
+package document
 
 import (
 	"encoding/json"
 	"reflect"
 	"sort"
 
+	"github.com/appno/stripe/validator"
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -22,7 +23,7 @@ func MakeCompliance(requirements []string) *Compliance {
 
 // ComplianceFromData : Compliance Factory From Data
 func ComplianceFromData(data interface{}) (*Compliance, error) {
-	requirements, err := DocumentValidator.Validate(data)
+	requirements, err := validator.DocumentValidator.Validate(data)
 	if err != nil {
 		return nil, err
 	}

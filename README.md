@@ -41,7 +41,7 @@ stripe server 8082
 
 Make **POST** request
 ```bash
-curl -H "Content-Type: application/json" -d "@payload.json" localhost:8082
+curl -X POST -H "Content-Type: application/json" -d "@payload.json" localhost:8082
 ```
 
 *Run `stripe --help` to see all command options*

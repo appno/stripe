@@ -10,7 +10,7 @@ dep ensure
 This project uses [dep](https://golang.github.io/dep/) for versioning. Run `go get -u github.com/golang/dep/cmd/dep` to install.
 
 ## Building
-```
+```bash
 make build # Build application
 make test  # Run tests
 ```
@@ -45,6 +45,17 @@ curl -H "Content-Type: application/json" -d "@payload.json" localhost:8082
 ```
 
 *Run `stripe --help` to see all command options*
+
+### Running demos
+The demos require [jq](https://stedolan.github.io/jq/) for JSON pretty printing.
+With `stripe` added to your **`$PATH`**, run the following commands:
+```bash
+./demo/part1/cmd.sh
+./demo/part2/cmd.sh 1 1
+./demo/part2/http.sh 1 1
+./demo/part2/http.sh 20 20
+./demo/part2/http.sh [DELAY BETWEEN REQUESTS] [STRIPE_DEADLINE]
+```
 
 ### Data Validation
 [JSON Schema](http://json-schema.org/) for declarative, platform independent JSON validation.

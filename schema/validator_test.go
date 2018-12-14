@@ -15,7 +15,6 @@ type testInstance struct {
 }
 
 func TestValidator(t *testing.T) {
-	// validator := MakeValidator(Schema)
 	validator := DocumentValidator
 
 	bytes, err := internal.LoadTestData("testdata/part_1.json")
@@ -34,7 +33,7 @@ func TestValidator(t *testing.T) {
 		if err != nil {
 			t.Errorf("%s: %+v != nil", key, err)
 		} else {
-			if !actual.equals(value.Output) {
+			if !actual.equal(value.Output) {
 				t.Errorf("%s: %+v != %+v", key, actual, value.Output)
 			}
 		}

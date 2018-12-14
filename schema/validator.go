@@ -6,6 +6,9 @@ import (
 	"github.com/xeipuuv/gojsonschema"
 )
 
+// DocumentValidator : global document validator
+var DocumentValidator = DefaultValidator()
+
 // Validator : Validate JSON data
 type Validator struct {
 	Schema *gojsonschema.JSONLoader

@@ -20,6 +20,17 @@ func MakeCompliance(requirements []string) *Compliance {
 	return &Compliance{compliant, requirements}
 }
 
+// ComplianceFromData : Compliance Factory From Data
+func ComplianceFromData(data interface{}) (*Compliance, error) {
+	requirements, err := DocumentValidator.Validate(data)
+	if err != nil {
+		return nil, err
+	}
+
+	compliant := len(requirements) == 0
+	return &Compliance{compliant, requirements}, nil
+}
+
 // JSONString : JSON Representation of Compliance object
 func (c *Compliance) JSONString() (string, error) {
 	json, err := json.MarshalIndent(c, "", "    ")
@@ -30,14 +41,22 @@ func (c *Compliance) JSONString() (string, error) {
 	return string(json[:]), nil
 }
 
-func (c *Compliance) equals(other *Compliance) bool {
+func (c *Compliance) equal(other *Compliance) bool {
 	if c.Compliant != other.Compliant {
 		return false
 	}
+
+	cr := make([]string, len(c.Requirements))
+	copy(cr, c.Requirements)
+	or := make([]string, len(other.Requirements))
+	copy(or, other.Requirements)
+
+	sort.Strings(cr)
+	sort.Strings(or)
+
 	sort.Strings(c.Requirements)
 	sort.Strings(other.Requirements)
-
-	return reflect.DeepEqual(c.Requirements, other.Requirements)
+	return reflect.DeepEqual(cr, or)
 }
 
 // DebugString : Debug representation of Compliance object
@@ -47,15 +66,14 @@ func (c *Compliance) DebugString() string {
 
 // CompliancePastDue : Compliance with past_due JSON data
 type CompliancePastDue struct {
-	Compliant    bool     `json:"compliant"`
-	Requirements []string `json:"requirements"`
-	PastDue      []string `json:"past_due"`
+	Compliance
+	PastDue []string `json:"past_due"`
 }
 
 // MakeCompliancePastDue : CompliancePastDue Factory
 func MakeCompliancePastDue(requirements []string, pastDue []string) *CompliancePastDue {
 	compliant := len(requirements) == 0
-	return &CompliancePastDue{compliant, requirements, pastDue}
+	return &CompliancePastDue{Compliance{compliant, requirements}, pastDue}
 }
 
 // JSONString : JSON Representation of CompliancePastDue object
@@ -68,15 +86,19 @@ func (c *CompliancePastDue) JSONString() (string, error) {
 	return string(json[:]), nil
 }
 
-func (c *CompliancePastDue) equals(other *CompliancePastDue) bool {
-	if c.Compliant != other.Compliant {
+func (c *CompliancePastDue) equal(other *CompliancePastDue) bool {
+	if !c.Compliance.equal(&other.Compliance) {
 		return false
 	}
-	sort.Strings(c.Requirements)
-	sort.Strings(other.Requirements)
-	sort.Strings(c.PastDue)
-	sort.Strings(other.PastDue)
-	return reflect.DeepEqual(c, other)
+
+	cp := make([]string, len(c.PastDue))
+	copy(cp, c.PastDue)
+	op := make([]string, len(other.PastDue))
+	copy(op, other.PastDue)
+
+	sort.Strings(cp)
+	sort.Strings(op)
+	return reflect.DeepEqual(cp, op)
 }
 
 // DebugString : Debug representation of CompliancePastDue object

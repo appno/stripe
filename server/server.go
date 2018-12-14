@@ -4,33 +4,34 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/appno/stripe/schema"
 )
 
 func handler(w http.ResponseWriter, req *http.Request) {
-	decoder := json.NewDecoder(req.Body)
-
-	var doc interface{}
-	err := decoder.Decode(&doc)
+	bytes, err := ioutil.ReadAll(req.Body)
 	if err != nil {
 		panic(err)
 	}
 
-	result, err := schema.DocumentValidator.IsCompliant(doc)
+	document, err := schema.DocumentFromBytes(bytes)
 	if err != nil {
 		panic(err)
 	}
 
-	bytes, err := json.Marshal(result)
+	compliance := document.GetPastDueCompliance()
+	fmt.Println(compliance.DebugString())
+
+	data, err := json.Marshal(compliance)
 	if err != nil {
 		panic(err)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, err = io.WriteString(w, string(bytes))
+	_, err = io.WriteString(w, string(data))
 
 	if err != nil {
 		panic(err)

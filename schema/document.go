@@ -10,9 +10,6 @@ import (
 	"time"
 )
 
-// DocumentValidator : global document validator
-var DocumentValidator = DefaultValidator()
-
 // Document struct
 type Document struct {
 	ID         string
@@ -55,8 +52,7 @@ func NewDocument(data interface{}) (*Document, error) {
 // GetCompliance : Get document's compliance object
 func (d *Document) GetCompliance() *Compliance {
 	if d.compliance == nil {
-		compliance, _ := DocumentValidator.IsCompliant(d.data)
-		d.compliance = compliance
+		d.compliance, _ = ComplianceFromData(d.data)
 	}
 	return d.compliance
 }

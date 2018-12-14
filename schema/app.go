@@ -3,15 +3,13 @@ package schema
 import (
 	"fmt"
 	"os"
-	"path"
 	"time"
 
 	homedir "github.com/mitchellh/go-homedir"
 )
 
-// defaultHome     = "$HOME/.stripe"
 var (
-	defaultHome     = ".stripe"
+	defaultHome     = "$HOME/.stripe"
 	defaultDeadline = "60s"
 	defaultPort     = "8082"
 )
@@ -30,35 +28,35 @@ func GetConfigString() string {
 	return fmt.Sprintf(format, home, GetDeadline(), GetPort())
 }
 
-// GetAppHome : Get application directory and creates it if necessary
+// GetAppHome : Read application directory var
 func GetAppHome() (string, error) {
-	home, err := homedir.Dir()
+	home, ok := os.LookupEnv("STRIPE_HOME")
+	if !ok {
+		home = defaultHome
+	}
+
+	appHome, err := homedir.Expand(os.ExpandEnv(home))
 	if err != nil {
 		return "", err
 	}
 
-	// homedir.Expand(path)
-	configDir, ok := os.LookupEnv("STRIPE_HOME")
-	if !ok {
-		configDir = path.Join(home, defaultHome)
-	}
-
-	err = os.MkdirAll(configDir, os.ModePerm)
-	if err != nil {
-		return "", nil
-	}
-
-	return configDir, nil
+	return appHome, nil
 }
 
-// GetDeadline : Get deadline duration
-func GetDeadline() time.Duration {
+// GetDeadline : Read deadline environment var
+func GetDeadline() string {
 	value, ok := os.LookupEnv("STRIPE_DEADLINE")
 	if !ok {
 		value = defaultDeadline
 	}
+	return value
+}
 
-	duration, err := time.ParseDuration(value)
+// GetDeadlineDuration : Get deadline duration
+func GetDeadlineDuration() time.Duration {
+	deadline := GetDeadline()
+
+	duration, err := time.ParseDuration(deadline)
 	if err != nil {
 		duration, _ = time.ParseDuration(defaultDeadline)
 	}

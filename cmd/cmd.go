@@ -35,24 +35,21 @@ var Part1Cmd = &cobra.Command{
 	Args:    cobra.RangeArgs(0, 1),
 	Example: part1Example,
 	Run: func(cmd *cobra.Command, args []string) {
-		str, err := readInput(args, 0, filePath)
+		input, err := readInput(args, 0, filePath)
 		if err != nil {
 			os.Exit(1)
 		}
 
-		data, err := unmarshalInput(str)
+		document, err := schema.DocumentFromBytes(input)
+
 		if err != nil {
+			fmt.Printf("2: ERR: %+v\n", err)
 			os.Exit(1)
 		}
 
-		validator := schema.DefaultValidator()
-		result, err := validator.IsCompliant(data)
+		compliance := document.GetCompliance()
 
-		if err != nil {
-			os.Exit(1)
-		}
-
-		json, err := result.JSONString()
+		json, err := compliance.JSONString()
 
 		if err != nil {
 			os.Exit(1)
@@ -113,24 +110,22 @@ var Part2Cmd = &cobra.Command{
 	},
 }
 
-// MainCmd : Run main application
-var MainCmd = &cobra.Command{
-	Use:   "stripe",
-	Short: "stripe coding demo",
-	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-		fmt.Printf("Stripe coding demo.\n")
-	},
-}
-
 // ConfigCmd : Display configuration variables
 var ConfigCmd = &cobra.Command{
 	Use:   "config",
 	Short: "display application configuration",
 	Run: func(cmd *cobra.Command, args []string) {
-		// Do Stuff Here
-		// fmt.Printf("Stripe coding demo.\n")
 		fmt.Println(schema.GetConfigString())
+	},
+}
+
+// MainCmd : Run main application
+var MainCmd = &cobra.Command{
+	Use:   "stripe",
+	Short: "stripe coding demo",
+	Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		// Root command
 	},
 }
 

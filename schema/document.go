@@ -27,26 +27,7 @@ func DocumentFromBytes(bytes []byte) (*Document, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	id := ""
-	strKeyMap, ok := data.(map[string]interface{})
-	if ok {
-		value, ok := strKeyMap["id"]
-		if ok {
-			switch v := value.(type) {
-			case int:
-				id = strconv.Itoa(v)
-			case string:
-				id = v
-			case bool:
-				id = strconv.FormatBool(v)
-			default:
-			}
-		}
-	}
-
-	// fmt.Printf("id: %T=%+v", id, id)
-	return &Document{id, data, nil}, nil
+	return NewDocument(data)
 }
 
 // NewDocument : Create Document from interface
@@ -68,7 +49,6 @@ func NewDocument(data interface{}) (*Document, error) {
 		}
 	}
 
-	// fmt.Printf("id: %T=%+v", id, id)
 	return &Document{id, data, nil}, nil
 }
 
@@ -81,42 +61,52 @@ func (d *Document) GetCompliance() *Compliance {
 	return d.compliance
 }
 
+func (d *Document) getPath() (string, error) {
+	home, err := GetAppHome()
+	if err != nil {
+		return "", err
+	}
+
+	err = os.MkdirAll(home, os.ModePerm)
+	if err != nil {
+		return "", nil
+	}
+
+	return path.Join(home, fmt.Sprintf("%s.json", d.ID)), nil
+}
+
 // GetPastDueCompliance : Update and return new compliance state
 func (d *Document) GetPastDueCompliance() *CompliancePastDue {
+	return d.getPastDueCompliance(time.Now())
+}
+
+func (d *Document) getPastDueCompliance(timestamp time.Time) *CompliancePastDue {
 	data, _ := d.ReadCompliance()
-	newData, _ := d.ComputeCompliance(data)
+	newData, _ := d.computeCompliance(timestamp, data)
 	d.SaveCompliance(newData)
-	now := time.Now()
-	deadline := GetDeadline()
+	deadline := GetDeadlineDuration()
 
 	requirements := []string{}
 	pastDue := []string{}
 	for key, value := range newData {
-		if now.Sub(*value) > deadline {
+		if timestamp.Sub(*value) >= deadline {
 			pastDue = append(pastDue, key)
 		}
 		requirements = append(requirements, key)
 	}
-	compliant := len(requirements) == 0
-	return &CompliancePastDue{
-		compliant,
-		requirements,
-		pastDue,
-	}
+	return MakeCompliancePastDue(requirements, pastDue)
 }
 
 // ReadCompliance : Read stored compliance data
 func (d *Document) ReadCompliance() (map[string]*time.Time, error) {
 	if d.ID == "" {
-		return make(map[string]*time.Time), nil
-		// return nil, fmt.Errorf("id is not set: cannot read document")
+		return nil, nil
 	}
-	home, err := GetAppHome()
+
+	path, err := d.getPath()
 	if err != nil {
 		return nil, err
 	}
-
-	path := path.Join(home, fmt.Sprintf("%s.json", d.ID))
 
 	if _, err = os.Stat(path); os.IsNotExist(err) {
 		return make(map[string]*time.Time), nil
@@ -136,16 +126,20 @@ func (d *Document) ReadCompliance() (map[string]*time.Time, error) {
 
 // ComputeCompliance : Compute past due compliance
 func (d *Document) ComputeCompliance(data map[string]*time.Time) (map[string]*time.Time, error) {
-	now := time.Now()
+	return d.computeCompliance(time.Now(), data)
+}
+
+// ComputeCompliance : Compute past due compliance
+func (d *Document) computeCompliance(timestamp time.Time, data map[string]*time.Time) (map[string]*time.Time, error) {
 	newData := make(map[string]*time.Time)
 
 	compliance := d.GetCompliance()
-	for _, val := range compliance.Requirements {
-		timestamp, ok := data[val]
+	for _, key := range compliance.Requirements {
+		value, ok := data[key]
 		if ok {
-			newData[val] = timestamp
+			newData[key] = value
 		} else {
-			newData[val] = &now
+			newData[key] = &timestamp
 		}
 	}
 	return newData, nil
@@ -156,19 +150,18 @@ func (d *Document) SaveCompliance(data map[string]*time.Time) error {
 	if d.ID == "" {
 		return fmt.Errorf("id is not set: cannot save document")
 	}
-	home, err := GetAppHome()
+
+	path, err := d.getPath()
 	if err != nil {
 		return err
 	}
 
-	path := path.Join(home, fmt.Sprintf("%s.json", d.ID))
-
-	byteArr, err := json.Marshal(data)
+	bytes, err := json.Marshal(data)
 	if err != nil {
 		return err
 	}
 
-	err = ioutil.WriteFile(path, byteArr, 0644)
+	err = ioutil.WriteFile(path, bytes, 0644)
 	if err != nil {
 		return err
 	}
@@ -177,16 +170,16 @@ func (d *Document) SaveCompliance(data map[string]*time.Time) error {
 }
 
 // DeleteCompliance : Delete compliance data file
-func (d *Document) DeleteCompliance(data map[string]*time.Time) error {
+func (d *Document) DeleteCompliance() error {
 	if d.ID == "" {
 		return fmt.Errorf("id is not set: cannot delete document")
 	}
-	home, err := GetAppHome()
+
+	path, err := d.getPath()
+
 	if err != nil {
 		return err
 	}
-
-	path := path.Join(home, fmt.Sprintf("%s.json", d.ID))
 
 	return os.Remove(path)
 }

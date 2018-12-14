@@ -10,22 +10,14 @@ import (
 
 // Compliance : Compliance JSON data
 type Compliance struct {
-	Compliance    bool     `json:"compliant"`
+	Compliant    bool     `json:"compliant"`
 	Requirements []string `json:"requirements"`
 }
 
-func ComplianceFail() *Compliance {
-	requirements := []string{
-		"id",
-		"tax_id",
-		"first_name",
-		"last_name",
-		"address.street",
-		"address.city",
-		"address.postal_code",
-		"address.country",
-	}
-	return &Compliance{false, requirements}
+// MakeCompliance : Compliance Factory
+func MakeCompliance(requirements []string) *Compliance {
+	compliant := len(requirements) == 0
+	return &Compliance{compliant, requirements}
 }
 
 // JSONString : JSON Representation of Compliance object
@@ -39,7 +31,7 @@ func (c *Compliance) JSONString() (string, error) {
 }
 
 func (c *Compliance) equals(other *Compliance) bool {
-	if c.Compliance != other.Compliance {
+	if c.Compliant != other.Compliant {
 		return false
 	}
 	sort.Strings(c.Requirements)
@@ -55,19 +47,15 @@ func (c *Compliance) DebugString() string {
 
 // CompliancePastDue : Compliance with past_due JSON data
 type CompliancePastDue struct {
-	Compliance    bool     `json:"compliant"`
+	Compliant    bool     `json:"compliant"`
 	Requirements []string `json:"requirements"`
 	PastDue      []string `json:"past_due"`
 }
 
-// CompliancePastDueFail : CompliancePastDue with all fields failing validation
-func CompliancePastDueFail() *CompliancePastDue {
-	c := ComplianceFail()
-	return &CompliancePastDue{
-		c.Compliance,
-		c.Requirements,
-		[]string{},
-	}
+// MakeCompliancePastDue : CompliancePastDue Factory
+func MakeCompliancePastDue(requirements []string, pastDue []string) *CompliancePastDue {
+	compliant := len(requirements) == 0
+	return &CompliancePastDue{compliant, requirements, pastDue}
 }
 
 // JSONString : JSON Representation of CompliancePastDue object
@@ -81,7 +69,7 @@ func (c *CompliancePastDue) JSONString() (string, error) {
 }
 
 func (c *CompliancePastDue) equals(other *CompliancePastDue) bool {
-	if c.Compliance != other.Compliance {
+	if c.Compliant != other.Compliant {
 		return false
 	}
 	sort.Strings(c.Requirements)

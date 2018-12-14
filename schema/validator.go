@@ -1,7 +1,6 @@
 package schema
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/xeipuuv/gojsonschema"
@@ -18,21 +17,6 @@ func MakeValidator(schema string) *Validator {
 	return &Validator{Schema: &loader}
 }
 
-// StoreData : Unmarshal bytes into a struct
-func (v *Validator) StoreData(bytes []byte) (*Compliance, error) {
-	var result Document
-	err := json.Unmarshal(bytes, &result)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(result.ID) == 0 {
-		return ComplianceFail(), nil
-	}
-
-	return v.IsCompliant(result)
-}
-
 // DefaultValidator : Create Validator with default Schema
 func DefaultValidator() *Validator {
 	return MakeValidator(Schema)
@@ -45,12 +29,7 @@ func (v *Validator) IsCompliant(data interface{}) (*Compliance, error) {
 		return nil, err
 	}
 
-	compliant := true
-	if len(requirements) > 0 {
-		compliant = false
-	}
-
-	return &Compliance{compliant, requirements}, nil
+	return MakeCompliance(requirements), nil
 }
 
 // Validate : validate json string

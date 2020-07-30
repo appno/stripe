@@ -1,4 +1,7 @@
 # Stripe Project
+
+This repo is now located on Bitbucket at https://bitbucket.org/appno/stripe-tasks/src/master/
+
 Setting up project:
 ```bash
 go get -u github.com/appno/stripe
